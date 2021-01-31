@@ -7,4 +7,6 @@ COPY . .
 RUN go mod tidy
 RUN go build -o main
 
-ENTRYPOINT ["go", "run", "main.go"]
+RUN go get github.com/pilu/fresh
+
+ENTRYPOINT ["fresh"]
