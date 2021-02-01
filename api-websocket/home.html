@@ -9,6 +9,7 @@ window.onload = function () {
     var log = document.getElementById("log");
     let room = 'global'
     connecWebSocket()
+    document.title = room
     document.body.onkeypress = (e) => {
         if(e.key === 'r'){
             room = prompt("Please enter your name", "global");
