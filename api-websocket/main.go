@@ -39,7 +39,6 @@ func main() {
 	// Routes consist of a path and a handler function.
 	router.HandleFunc("/", serveHome)
 	router.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {
-		log.Println(mux.Vars(r))
 		serveWs(hub, w, r)
 	})
 
@@ -71,6 +70,10 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+type Message struct {
+		data []byte
+		room string
+}
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
 	hub *Hub
@@ -80,6 +83,8 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	room string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -104,7 +109,8 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+		data := Message{message, c.room}
+		c.hub.broadcast <- data
 	}
 }
 
@@ -151,12 +157,13 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), room : vars["id"]}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
@@ -169,10 +176,10 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 // clients.
 type Hub struct {
 	// Registered clients.
-	clients map[*Client]bool
+	clients map[string]map[*Client]bool
 
 	// Inbound messages from the clients.
-	broadcast chan []byte
+	broadcast chan Message
 
 	// Register requests from the clients.
 	register chan *Client
@@ -183,10 +190,10 @@ type Hub struct {
 
 func newHub() *Hub {
 	return &Hub{
-		broadcast:  make(chan []byte),
+		broadcast:  make(chan Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		clients:    make(map[string]map[*Client]bool),
 	}
 }
 
@@ -194,20 +201,25 @@ func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.clients[client] = true
+			connection := h.clients[client.room]
+			if connection == nil {
+				connection = make(map[*Client]bool)
+				h.clients[client.room] = connection
+			}
+			h.clients[client.room][client] = true
 		case client := <-h.unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
+			if _, ok := h.clients[client.room][client]; ok {
+				delete(h.clients[client.room], client)
 				close(client.send)
 			}
-        case message := <-h.broadcast:
-            fmt.Printf("%+v\n",message)
-			for client := range h.clients {
+		case message := <-h.broadcast:
+			fmt.Printf("%+v\n",message)
+			for client := range h.clients[message.room] {
 				select {
-				case client.send <- message:
+				case client.send <- message.data:
 				default:
 					close(client.send)
-					delete(h.clients, client)
+					delete(h.clients[message.room], client)
 				}
 			}
 		}
