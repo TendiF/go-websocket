@@ -12,6 +12,7 @@ import (
 	"time"
 	"fmt"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -34,14 +35,16 @@ func main() {
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	router := mux.NewRouter()
+	// Routes consist of a path and a handler function.
+	router.HandleFunc("/", serveHome)
+	router.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {
+		log.Println(mux.Vars(r))
 		serveWs(hub, w, r)
 	})
-	err := http.ListenAndServe(*addr, nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+
+	// Bind to a port and pass our router in
+	log.Fatal(http.ListenAndServe(":8081", router))
 }
 
 const (
