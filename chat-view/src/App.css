@@ -1,0 +1,103 @@
+.header, .footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding-bottom: 5px;
+}
+.footer > div {
+  width: 98vw !important;
+}
+.header > div, .footer > div {
+  display: flex;
+  border: 1px solid gray;
+  border-radius: 15px;
+  width: 300px;
+  margin-top:10px;
+}
+
+.header > div > img, .footer > div > img{
+  margin: 5px;
+}
+.header > div > input, .footer > div > textarea{
+  border: none;
+  border-radius: 15px;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus{
+  outline: none;
+}
+
+.group , .header{
+  border-bottom: 1px solid rgb(212, 212, 212);
+  padding-bottom: 5px;
+}
+.group > .title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.group > .title > h4{
+ margin-bottom: 10px;
+}
+
+.group > .title > span{
+font-size: 12px;
+}
+
+.group {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+a:visited, a:link, a:hover, v  {
+  text-decoration: none;
+  color: black;
+}
+
+.header-detail {
+  display: flex;
+  border: 1px solid gray;
+}
+
+.header-detail > .title-detail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-detail > h3 {
+  margin-left: 10px;
+}
+.chat-right, .chat-left {
+  margin: 8px;
+}
+.chats > .chat-right {
+  display: flex;
+  justify-content: flex-end;
+}
+.chat-right > .message {
+  color: white;
+  background: #009688;
+  width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.chats > .chat-left {
+  color: white;
+}
+
+.chat-left > .message {
+  color: white;
+  background: gray;
+  width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+}
