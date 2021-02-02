@@ -8,6 +8,7 @@
   bottom: 0;
   width: 100%;
   padding-bottom: 5px;
+  background: white;
 }
 .footer > div {
   width: 98vw !important;
@@ -64,6 +65,10 @@ a:visited, a:link, a:hover, v  {
 .header-detail {
   display: flex;
   border: 1px solid gray;
+  position: fixed;
+  width: 100%;
+  background: white;
+  top: 0;
 }
 
 .header-detail > .title-detail {

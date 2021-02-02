@@ -41,18 +41,25 @@ function DetailChat() {
       <div></div>
     </div>
     <div className="chats">
-      <div className="chat-right">
-        <textarea className="message">
-          kumaha damang
-        </textarea>
-      </div>
-      <div className="chat-left">
-        <textarea className="message">
-          Lorep Ipsum dolor sit amet 
-          Lorep Ipsum dolor sit amet 
-          Lorep Ipsum dolor sit amet 
-        </textarea>
-      </div>
+      {[1,2,3,4,5,6,7,8,9].map(v => {
+        return <>
+          <div className="chat-right">
+            <div className="message">
+              kumaha damang
+              <div style={{textAlign:'right', fontSize: '11px'}}>20:00</div>
+            </div>
+          </div>
+          <div className="chat-left">
+            <div className="message">
+              <div style={{fontWeight: 'bold', marginBottom: '3px'}}>Tendi F</div>
+              Lorep Ipsum dolor sit amet 
+              Lorep Ipsum dolor sit amet 
+              Lorep Ipsum dolor sit amet 
+              <div style={{fontSize: '11px'}}>20:00</div>
+            </div>
+          </div>
+        </>
+      })}
     </div>
     <div>
       <div className="footer">
