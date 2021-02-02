@@ -1,6 +1,5 @@
 'use strict';
 
-const applicationServerPublicKey = 'BGWdLQDi98kflBQ1_dIFVhIgcHMyNtNxHVEGjT3WxO9S82K1nzPEHyI-KnZXjxPq-f88P0F0-DXuASP0PGqwbe4';
 
 let isSubscribed = false;
 let swRegistration = null;
@@ -36,7 +35,7 @@ function unsubscribeUser() {
   });
 }
 
-function subscribeNotificationCheck(){
+function subscribeNotificationCheck(applicationServerPublicKey){
   if (isSubscribed) {
     unsubscribeUser();
   } else {
@@ -46,7 +45,7 @@ function subscribeNotificationCheck(){
       applicationServerKey: applicationServerKey
     })
     .then(function(subscription) {
-      console.log('User is subscribed.');
+      console.log('User is subscribed.', subscription);
       isSubscribed = true;
     })
     .catch(function(err) {

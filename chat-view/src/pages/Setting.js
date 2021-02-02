@@ -1,4 +1,5 @@
 export default function Setting() {
+  var token = process.env.REACT_APP_SERVER_PUBLIC
   // eslint-disable-next-line
   var enableNotif = subscribeNotificationCheck
   return <>
@@ -8,7 +9,7 @@ export default function Setting() {
     <div>
       <div className="setting">
         <p>Enable Push Notification</p>
-        <button onClick={() => enableNotif()} className="js-push-btn">Enable</button>
+        <button onClick={() => enableNotif(token)} className="js-push-btn">Enable</button>
       </div>
     </div>
   </>

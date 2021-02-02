@@ -17,10 +17,10 @@ export default function NestingExample() {
     <Router>
       <div>
         <Switch>
-          <Route exact path="/">
+          <Route exact path="/chat/">
             <ListGroupChat />
           </Route>
-          <Route path="/:id">
+          <Route path="/chat/:id">
             <DetailChat />
           </Route>
         </Switch>
@@ -83,7 +83,7 @@ function ListGroupChat() {
     </div>
     <div className="groups">
       {[1,2,3,4,5,6,7,8].map(v => {
-        return <Link to={'/'+v}>
+        return <Link to={'/setting'}>
         <div className="group">
           <div className="title">
             <h4>Group Badminton</h4>

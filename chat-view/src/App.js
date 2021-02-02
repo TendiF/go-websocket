@@ -17,7 +17,7 @@ function App() {
         <Route path="/setting">
           <Setting/>
         </Route>
-        <Route path="/">
+        <Route path="/chat">
           <Home/>
         </Route>
       </Switch>
