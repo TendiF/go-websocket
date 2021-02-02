@@ -106,3 +106,9 @@ a:visited, a:link, a:hover, v  {
   padding: 10px;
   border-radius: 10px;
 }
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+}
