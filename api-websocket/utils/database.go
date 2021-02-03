@@ -11,16 +11,9 @@ import (
 	// "go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type Post struct {
-
-	Title string `json:"title,omitempty"`
-	
-	Body string `json:"body,omitempty"`
-	
-}
+var MongoClient *mongo.Client
 
 func CreateConnection(){
-	log.Println(os.Getenv("MONGO_DB"))
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://"+os.Getenv("MONGO_USERNAME")+":"+os.Getenv("MONGO_PASSWORD")+"@"+os.Getenv("MONGO_HOSTNAME")+":"+os.Getenv("MONGO_PORT")+"/?authSource=admin"))
 	if err != nil {
 			log.Fatal(err)
@@ -31,17 +24,14 @@ func CreateConnection(){
 		log.Fatal(err)
 	}
 
-	post := Post{"title", "Post body"}
-	collection := client.Database(os.Getenv("MONGO_DB")).Collection("posts")
-	insertResult, err := collection.InsertOne(context.TODO(), post)
+	MongoClient = client
 
-	if err != nil {
+	// post := Post{"title", "Post body"}
+	// collection := client.Database(os.Getenv("MONGO_DB")).Collection("chats")
+	// insertResult, err := collection.InsertOne(context.TODO(), post)
 
-	log.Fatal(err)
-
-	}
-
-
-
-	log.Println("Inserted post with ID:", insertResult.InsertedID)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Println("Inserted post with ID:", insertResult.InsertedID)
 }
