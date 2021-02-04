@@ -1,17 +1,12 @@
 package chatService
 
 import (
-	"os"
-	"time"
 	"strconv"
-	"context"
 	"encoding/json"
 	"net/http"
 	"log"
 	. "go-chat/utils"
-	. "github.com/gobeam/mongo-go-pagination"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	chatModel "go-chat/models/chat-model"
 )
 
 func Main(w http.ResponseWriter, r *http.Request){
@@ -30,10 +25,8 @@ func Main(w http.ResponseWriter, r *http.Request){
 
 func getChat(w http.ResponseWriter, r *http.Request){
 	// Example for Normal Find query
-	filter := bson.M{}
-	var limit int64 = 10
 	var page int64 = 1
-
+	var limit int64 = 10
 	if keys, ok := r.URL.Query()["page"]; ok {
 		i , err :=  strconv.ParseInt(keys[0], 10, 64)
 		if err != nil {
@@ -50,34 +43,9 @@ func getChat(w http.ResponseWriter, r *http.Request){
 		limit = i
 	}
 
-	collection := MongoClient.Database(os.Getenv("MONGO_DB")).Collection("chats")
-	projection := bson.D{
-	}
+	data := chatModel.Get(page, limit)
 	
-	paginatedData, err := New(collection).Limit(limit).Page(page).Sort("price", -1).Select(projection).Filter(filter).Find()
-	if err != nil {
-		panic(err)
-	}
-
-	var chats []Chat
-	for _, raw := range paginatedData.Data {
-		var chat *Chat
-		if marshallErr := bson.Unmarshal(raw, &chat); marshallErr == nil {
-			chats = append(chats, *chat)
-		}
-
-	}
-
-	b, err := json.Marshal(map[string]interface{}{
-		"data" : chats,
-		"pagination" : paginatedData.Pagination,
-	})
-
-	if err != nil {
-		log.Println("error:", err)
-	}
-
-	w.Write([]byte(b))
+	w.Write([]byte(data))
 }
 
 func AddChat(w http.ResponseWriter, r *http.Request){
@@ -87,16 +55,7 @@ func AddChat(w http.ResponseWriter, r *http.Request){
 		log.Println(err)
 	}
 
-	chat.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
-
-	collection := MongoClient.Database(os.Getenv("MONGO_DB")).Collection("chats")
-	if insertResult, err := collection.InsertOne(context.TODO(), chat); err == nil {
-		if oid, ok := insertResult.InsertedID.(primitive.ObjectID); ok {
-			chat.ID = oid
-		}
-	} else {
-		log.Fatal(err)
-	}
+	chatModel.Add(chat)
 
 	b, err := json.Marshal(chat)
 	if err != nil {
