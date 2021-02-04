@@ -5,7 +5,8 @@
 package main
 
 import (
-	chatService "go-chat/chat-service"
+	chatService "go-chat/service/chat-service"
+	userService "go-chat/service/user-service"
 	utilsService "go-chat/utils"
 	"flag"
 	"bytes"
@@ -40,6 +41,7 @@ func main() {
 	go hub.run()
 	router := mux.NewRouter()
 	// Routes consist of a path and a handler function.
+	router.HandleFunc("/user", userService.Main)
 	router.HandleFunc("/chat", chatService.Main)
 	router.HandleFunc("/", serveHome)
 	router.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {

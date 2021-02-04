@@ -2,6 +2,7 @@ package chatService
 
 import (
 	"os"
+	"time"
 	"strconv"
 	"context"
 	"encoding/json"
@@ -85,6 +86,8 @@ func AddChat(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		log.Println(err)
 	}
+
+	chat.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
 
 	collection := MongoClient.Database(os.Getenv("MONGO_DB")).Collection("chats")
 	if insertResult, err := collection.InsertOne(context.TODO(), chat); err == nil {
