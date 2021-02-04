@@ -55,7 +55,12 @@ func AddChat(w http.ResponseWriter, r *http.Request){
 		log.Println(err)
 	}
 
-	chatModel.Add(chat)
+	if chat.CreatedBy.IsZero() {
+		http.Error(w, "required Auth", http.StatusNotAcceptable)
+		return
+	}
+
+	chat = chatModel.Add(chat)
 
 	b, err := json.Marshal(chat)
 	if err != nil {

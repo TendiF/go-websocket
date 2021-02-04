@@ -1,4 +1,4 @@
-package chatModel
+package userModel
 
 import (
 	"time"
@@ -12,20 +12,20 @@ import (
 	. "github.com/gobeam/mongo-go-pagination"
 )
 
-var collection = "chats"
+var collection = "users"
 
-func Add(chat Chat) Chat{
-	chat.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
+func Add(user User) User{
+	user.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
 
 	collection := MongoClient.Database(os.Getenv("MONGO_DB")).Collection(collection)
-	if insertResult, err := collection.InsertOne(context.TODO(), chat); err == nil {
+	if insertResult, err := collection.InsertOne(context.TODO(), user); err == nil {
 		if oid, ok := insertResult.InsertedID.(primitive.ObjectID); ok {
-			chat.ID = oid
+			user.ID = oid
 		}
 	} else {
 		log.Fatal(err)
 	}
-	return chat
+	return user
 }
 
 func Get(page int64, limit int64) []byte{
@@ -39,16 +39,16 @@ func Get(page int64, limit int64) []byte{
 		panic(err)
 	}
 
-	var chats []Chat
+	var users []User
 	for _, raw := range paginatedData.Data {
-		var chat *Chat
-		if marshallErr := bson.Unmarshal(raw, &chat); marshallErr == nil {
-			chats = append(chats, *chat)
+		var user *User
+		if marshallErr := bson.Unmarshal(raw, &user); marshallErr == nil {
+			users = append(users, *user)
 		}
 	}
 
 	b, err := json.Marshal(map[string]interface{}{
-		"data" : chats,
+		"data" : users,
 		"pagination" : paginatedData.Pagination,
 	})
 
