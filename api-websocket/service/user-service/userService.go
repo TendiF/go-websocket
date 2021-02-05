@@ -6,6 +6,7 @@ import (
 	"log"
 	. "go-chat/utils"
 	userModel "go-chat/models/user-model"
+	"go.mongodb.org/mongo-driver/mongo"
 
 )
 
@@ -69,6 +70,23 @@ func Login(w http.ResponseWriter, r *http.Request){
 	if user.Phone == "" {
 		http.Error(w, "required Phone", http.StatusNotAcceptable)
 		return
+	}
+
+	plainPassword := user.Password
+
+	user, err = userModel.GetByPhone(user.Phone); 
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "phone number not found", http.StatusNotAcceptable)
+		}
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+
+	if ComparePasswords(user.Password, []byte(plainPassword)) {
+		w.Write([]byte(string("Login Success")))
+	} else {
+		http.Error(w, "wrong phone or password", http.StatusNotAcceptable)
 	}
 
 

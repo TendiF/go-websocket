@@ -57,3 +57,12 @@ func Get(page int64, limit int64) []byte{
 	}
 	return b
 }	
+
+func GetByPhone(phone string)(User, error){
+	collection := MongoClient.Database(os.Getenv("MONGO_DB")).Collection(collection)
+
+	var user User
+	err := collection.FindOne(context.TODO(), bson.D{{"phone", phone}}).Decode(&user)
+
+	return user, err
+}

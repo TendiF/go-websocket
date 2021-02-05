@@ -41,7 +41,9 @@ func main() {
 	go hub.run()
 	router := mux.NewRouter()
 	// Routes consist of a path and a handler function.
-	router.HandleFunc("/user", userService.Main)
+	s := router.PathPrefix("/user").Subrouter()
+		s.HandleFunc("", userService.Main)
+		s.HandleFunc("/login", userService.Login)
 	router.HandleFunc("/chat", chatService.Main)
 	router.HandleFunc("/", serveHome)
 	router.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {
