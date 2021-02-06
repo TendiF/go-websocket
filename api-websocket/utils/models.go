@@ -16,6 +16,7 @@ type Group struct {
 	CreatedBy primitive.ObjectID `bson:"created_by,omitempty"`
 	CreatedAt primitive.DateTime `bson:"created_at,omitempty"`
 	Title string `bson:"title,omitempty"`
+	Type string `bson:"type,omitempty"`
 }
 
 type User struct {

@@ -8,6 +8,8 @@ import {
 
 import Home from './pages/Home'
 import Setting from './pages/Setting'
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 
 function App() {
@@ -19,6 +21,12 @@ function App() {
         </Route>
         <Route path="/chat">
           <Home/>
+        </Route>
+        <Route path="/login">
+          <Login/>
+        </Route>
+        <Route path="/register">
+          <Register/>
         </Route>
       </Switch>
     </Router>
