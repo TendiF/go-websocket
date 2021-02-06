@@ -1,13 +1,15 @@
 package userService
 
 import (
+	"os"
 	"encoding/json"
 	"net/http"
 	"log"
+	"time"
 	. "go-chat/utils"
 	userModel "go-chat/models/user-model"
 	"go.mongodb.org/mongo-driver/mongo"
-
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 func Main(w http.ResponseWriter, r *http.Request){
@@ -84,7 +86,27 @@ func Login(w http.ResponseWriter, r *http.Request){
 	}
 
 	if ComparePasswords(user.Password, []byte(plainPassword)) {
-		w.Write([]byte(string("Login Success")))
+		atClaims := jwt.MapClaims{}
+		atClaims["authorized"] = true
+		atClaims["user_id"] = user.ID
+		atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+		at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+		token, err := at.SignedString([]byte(os.Getenv("JWT_SECRET")))
+		if err != nil {
+			 log.Println(err)
+		}
+
+		b, err := json.Marshal(map[string]interface{}{
+			"token": token,
+			"message" : "success",
+		})
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		w.Write([]byte(string(b)))
 	} else {
 		http.Error(w, "wrong phone or password", http.StatusNotAcceptable)
 	}

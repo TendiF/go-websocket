@@ -34,7 +34,7 @@ func Get(page int64, limit int64) []byte{
 	projection := bson.D{
 	}
 	
-	paginatedData, err := New(collection).Limit(limit).Page(page).Sort("price", -1).Select(projection).Filter(filter).Find()
+	paginatedData, err := New(collection).Limit(limit).Page(page).Sort("created_at", -1).Select(projection).Filter(filter).Find()
 	if err != nil {
 		panic(err)
 	}
