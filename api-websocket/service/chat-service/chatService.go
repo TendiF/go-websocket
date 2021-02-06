@@ -7,11 +7,15 @@ import (
 	"log"
 	. "go-chat/utils"
 	chatModel "go-chat/models/chat-model"
+	"github.com/gorilla/context"
 )
 
 func Main(w http.ResponseWriter, r *http.Request){
 	log.Println(r.Method)
 
+	user_id := context.Get(r, "user_id")
+
+	log.Println("here", user_id)
 	if r.Method == "GET" {
 		getChat(w, r)
 		return

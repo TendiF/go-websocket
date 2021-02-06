@@ -178,7 +178,6 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			log.Printf("%+v\n",message)
 			for client := range h.clients[message.room] {
 				select {
 				case client.send <- message.data:

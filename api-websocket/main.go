@@ -38,6 +38,7 @@ func main() {
 	go hub.Run()
 	router := mux.NewRouter()
 	// Routes consist of a path and a handler function.
+	router.Use(utilsService.AuthMiddleware)
 	s := router.PathPrefix("/user").Subrouter()
 		s.HandleFunc("", userService.Main)
 		s.HandleFunc("/login", userService.Login)
