@@ -13,10 +13,15 @@ import (
 )
 
 func Main(w http.ResponseWriter, r *http.Request){
-	log.Println(r.Method)
+	log.Println(r.Method, r.URL.Path )
 
-	if r.Method == "POST" {
+	if r.Method == "POST" && r.URL.Path == "/user"{
 		AddUser(w, r)
+		return
+	}
+
+	if r.Method == "POST" && r.URL.Path == "/user/login"{
+		Login(w, r)
 		return
 	}
 

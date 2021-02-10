@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -41,7 +42,7 @@ func main() {
 	router.Use(utilsService.AuthMiddleware)
 	s := router.PathPrefix("/user").Subrouter()
 		s.HandleFunc("", userService.Main)
-		s.HandleFunc("/login", userService.Login)
+		s.HandleFunc("/login", userService.Main)
 	router.HandleFunc("/chat", chatService.Main)
 	router.HandleFunc("/", serveHome)
 	router.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {
@@ -49,5 +50,6 @@ func main() {
 	})
 
 	// Bind to a port and pass our router in
-	log.Fatal(http.ListenAndServe(":8081", router))
+	log.Fatal(http.ListenAndServe(":8081", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
+	// log.Fatal(http.ListenAndServe(":8081", router))
 }
